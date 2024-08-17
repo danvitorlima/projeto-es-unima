@@ -16,9 +16,9 @@
   Jogo desenvolvido para Windows
 
 ## How
-  Unity
-  C#
-
+	Usando uma engine de jogo (como Unity ou Godot) para o desenvolvimento.
+	Implementação de IA para inimigos utilizando algoritmos de busca, árvores de comportamento, ou aprendizado de máquina simples.
+  
 Colaboradores:
 /domlops
 /vdrdavi
