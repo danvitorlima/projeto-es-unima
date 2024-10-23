@@ -25,6 +25,13 @@ public class SistemaVida : MonoBehaviour
         }
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Inimigo"))
+        {
+            ReceberDano(10);
+        }
+    }
     public void Curar(float quantidade)
     {
         vidaAtual += quantidade;

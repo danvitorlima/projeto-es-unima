@@ -39,7 +39,14 @@ public class PatrulhaInimigo : MonoBehaviour
         gameObject.transform.up = (alvo - gameObject.transform.position).normalized;
         rb.MovePosition(Vector3.MoveTowards(rb.position, alvo, 2 * Time.deltaTime));
     }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            rb.AddForce(-transform.up * 5000);
 
+        }
+    }
 
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -47,20 +54,23 @@ public class PatrulhaInimigo : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             patrulha = false;
-            Debug.Log(patrulha);
+            index = 0;
         }
     }
     
     private void OnTriggerStay2D(Collider2D collision)
     {
-        MoverInimigo(collision);
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            patrulha = false;
+            MoverInimigo(collision);
+        }
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
             patrulha = true;
-            Debug.Log(patrulha);
             pontosDePatrulha = EncontrarProximosPPs();
             ppAtual = pontosDePatrulha[index];
         }
@@ -109,7 +119,7 @@ public class PatrulhaInimigo : MonoBehaviour
     }
     void FixedUpdate()
     {
-        Debug.Log(index);
+        //Debug.Log(index);
         if (patrulha)
         {
             MoverInimigo(ppAtual);
