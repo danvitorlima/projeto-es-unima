@@ -7,9 +7,9 @@ using UnityEngine.Tilemaps;
 public class TilemapVisualizer : MonoBehaviour
 {
     [SerializeField]
-    private Tilemap floorTilemap, wallTilemap, escadaTilemap;
+    private Tilemap floorTilemap, wallTilemap, escadaTilemap, ppTilemap;
     [SerializeField]
-    private TileBase floorTile, wallTop, escadaTile;
+    private TileBase floorTile, wallTop, escadaTile, ppTile;
 
     public void PaintFloorTiles(IEnumerable<Vector2Int> floorPositions)
     {
@@ -19,6 +19,11 @@ public class TilemapVisualizer : MonoBehaviour
     public void ColocarEscada(Vector2Int escadaPos)
     {
         PaintSingleTile(escadaTilemap, escadaTile, escadaPos);
+    }
+
+    public void ColocarPP(Vector2Int ppPos)
+    {
+        PaintSingleTile(ppTilemap, ppTile, ppPos);
     }
     private void PaintTiles(IEnumerable<Vector2Int> positions, Tilemap tilemap, TileBase tile)
     {
@@ -44,5 +49,6 @@ public class TilemapVisualizer : MonoBehaviour
         floorTilemap.ClearAllTiles();
         wallTilemap.ClearAllTiles();
         escadaTilemap.ClearAllTiles();
+        ppTilemap.ClearAllTiles();
     }
 }

@@ -1,10 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
-using UnityEditor.SceneManagement;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public class PatrulhaInimigo : MonoBehaviour
 {
@@ -95,19 +90,7 @@ public class PatrulhaInimigo : MonoBehaviour
     private Vector3[] EncontrarProximosPPs()
     {
         var pps = GameObject.FindGameObjectsWithTag("PP");
-        var listaDePPs = pps.ToList().OrderBy(p => Vector3.Distance(p.transform.position,transform.position)).ToList();
-        string a = "A";
-        string b = "B";
-        foreach (var item in listaDePPs)
-        {
-            a += item.name + ",";
-        }
-        foreach (var item in pps)
-        {
-            b += item.name + ",";
-        }
-        Debug.Log(a);
-        Debug.Log(b);
+        var listaDePPs = pps.ToList().OrderBy(p => Vector3.Distance(p.transform.position,transform.position)).Take(4);
         return listaDePPs.Select(n => n.transform.position).ToArray();
         //Vector2 direcao = ppProximo.transform.position - gameObject.transform.position;
         //Debug.Log(direcao.magnitude);

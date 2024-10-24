@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - GeradorDeNivel
+  - PP
+  - Inimigo
   layers:
   - Default
   - TransparentFX
