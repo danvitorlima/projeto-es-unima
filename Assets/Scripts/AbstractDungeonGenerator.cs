@@ -12,6 +12,10 @@ public abstract class AbstractDungeonGenerator : MonoBehaviour
 
     public void GenerateDungeon()
     {
+        foreach (var inimigo in GameObject.FindGameObjectsWithTag("Inimigo"))
+        {
+            Destroy(inimigo);
+        }
         tilemapVisualizer.Clear();
         RunProceduralGeneration();
     }

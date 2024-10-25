@@ -6,7 +6,8 @@ public class SistemaVida : MonoBehaviour
     public float vidaMaxima = 100f;
     public float vidaAtual;
     public Image barraDeVidaUI;
-
+    [SerializeField]
+    GameObject telaGameOver;
     void Start()
     {
         vidaAtual = vidaMaxima;
@@ -25,6 +26,13 @@ public class SistemaVida : MonoBehaviour
         }
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Inimigo"))
+        {
+            ReceberDano(10);
+        }
+    }
     public void Curar(float quantidade)
     {
         vidaAtual += quantidade;
@@ -42,6 +50,7 @@ public class SistemaVida : MonoBehaviour
 
     private void Morrer()
     {
+        telaGameOver.SetActive(true);
         Destroy(gameObject);
     }
 }

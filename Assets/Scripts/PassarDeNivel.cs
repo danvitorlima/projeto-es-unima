@@ -11,8 +11,10 @@ public class PassarDeNivel : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        collision.gameObject.transform.position = Vector3.zero;
-        dungeonGenerator.GetComponent<CorridorFirstDungeonGenerator>().GenerateDungeon();
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            dungeonGenerator.GetComponent<CorridorFirstDungeonGenerator>().GenerateDungeon();
+        }
     }
     // Update is called once per frame
     void Update()

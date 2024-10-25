@@ -5,11 +5,16 @@ TagManager:
   serializedVersion: 2
   tags:
   - GeradorDeNivel
+  - PP
+  - Inimigo
+  - Parede
+  - GameOver
+  - Pause
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Inimigos
   - Water
   - UI
   - 

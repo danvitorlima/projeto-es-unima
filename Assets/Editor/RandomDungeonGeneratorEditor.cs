@@ -18,6 +18,10 @@ public class RandomDungeonGeneratorEditor : Editor
         base.OnInspectorGUI();
         if(GUILayout.Button("Create Dungeon"))
         {
+            foreach (var inimigo in GameObject.FindGameObjectsWithTag("Inimigo"))
+            {
+                DestroyImmediate(inimigo);
+            }
             generator.GenerateDungeon();
         }
     }
