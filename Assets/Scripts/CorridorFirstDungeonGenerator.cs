@@ -14,6 +14,8 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
     private float roomPercent = 0.8f;
     [SerializeField]
     private GameObject jogador;
+    [SerializeField]
+    private GameObject inimigo;
 
     protected override void RunProceduralGeneration()
     {
@@ -58,6 +60,7 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
         }
         foreach (var pp in roomPosEPontosDePatrulha.Item2)
         {
+            Instantiate(inimigo, (Vector3Int)pp, Quaternion.identity);
             tilemapVisualizer.ColocarPP(pp);
         }
 

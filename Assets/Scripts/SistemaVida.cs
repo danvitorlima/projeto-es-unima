@@ -6,7 +6,8 @@ public class SistemaVida : MonoBehaviour
     public float vidaMaxima = 100f;
     public float vidaAtual;
     public Image barraDeVidaUI;
-
+    [SerializeField]
+    GameObject telaGameOver;
     void Start()
     {
         vidaAtual = vidaMaxima;
@@ -49,6 +50,7 @@ public class SistemaVida : MonoBehaviour
 
     private void Morrer()
     {
+        telaGameOver.SetActive(true);
         Destroy(gameObject);
     }
 }

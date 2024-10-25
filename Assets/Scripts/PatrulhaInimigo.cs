@@ -9,6 +9,7 @@ public class PatrulhaInimigo : MonoBehaviour
     Vector3[] pontosDePatrulha;
     Vector3 ppAtual;
     int index;
+
     void Start()
     {
         index = 0;
@@ -18,12 +19,6 @@ public class PatrulhaInimigo : MonoBehaviour
         patrulha = true;
     }
 
-
-    private void MoverInimigo(GameObject alvo)
-    {
-        gameObject.transform.up = (alvo.transform.position - gameObject.transform.position).normalized;
-        rb.MovePosition(Vector3.MoveTowards(rb.position, alvo.transform.position, 2 * Time.deltaTime));
-    }
     private void MoverInimigo(Collider2D alvo)
     {
         gameObject.transform.up = (alvo.transform.position - gameObject.transform.position).normalized;
@@ -39,7 +34,6 @@ public class PatrulhaInimigo : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             rb.AddForce(-transform.up * 5000);
-
         }
     }
 
