@@ -50,7 +50,10 @@ public class SistemaVida : MonoBehaviour
 
     private void Morrer()
     {
-        telaGameOver.SetActive(true);
+        if (gameObject.CompareTag("Player"))
+        {
+            telaGameOver.SetActive(true);
+        }
         Destroy(gameObject);
     }
 }

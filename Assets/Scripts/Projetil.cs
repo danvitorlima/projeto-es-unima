@@ -17,9 +17,9 @@ public class Projetil : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Inimigo")&& collision.GetType().Equals(typeof(PolygonCollider2D)))
+        if (collision.gameObject.CompareTag("Inimigo"))
         {
-            Destroy(collision.gameObject);
+            collision.gameObject.GetComponent<SistemaVida>().ReceberDano(50);
             Destroy(gameObject);
         }
         else if (collision.gameObject.CompareTag("Parede"))
