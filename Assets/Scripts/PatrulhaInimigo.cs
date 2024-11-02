@@ -35,7 +35,7 @@ public class PatrulhaInimigo : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            if(Time.time - lastAttackTime >= 1)
+            if (Time.time - lastAttackTime >= 1)
             {
                 collision.gameObject.GetComponent<SistemaVida>().ReceberDano(10);
                 lastAttackTime = Time.time;
@@ -63,7 +63,7 @@ public class PatrulhaInimigo : MonoBehaviour
             index = 0;
         }
     }
-    
+
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
@@ -78,9 +78,13 @@ public class PatrulhaInimigo : MonoBehaviour
         {
             patrulha = true;
             pontosDePatrulha = EncontrarProximosPPs();
+            if (index < 0 || index >= pontosDePatrulha.Length)
+            {
+                index = 0;
+            }
             ppAtual = pontosDePatrulha[index];
         }
-        
+
     }
 
     private GameObject EncontrarMenorDistancia(GameObject objeto, GameObject[] lista)
@@ -101,7 +105,7 @@ public class PatrulhaInimigo : MonoBehaviour
     private Vector3[] EncontrarProximosPPs()
     {
         var pps = GameObject.FindGameObjectsWithTag("PP");
-        var listaDePPs = pps.ToList().OrderBy(p => Vector3.Distance(p.transform.position,transform.position)).Take(4);
+        var listaDePPs = pps.ToList().OrderBy(p => Vector3.Distance(p.transform.position, transform.position)).Take(4);
         return listaDePPs.Select(n => n.transform.position).ToArray();
         //Vector2 direcao = ppProximo.transform.position - gameObject.transform.position;
         //Debug.Log(direcao.magnitude);
@@ -119,7 +123,7 @@ public class PatrulhaInimigo : MonoBehaviour
             MoverInimigo(ppAtual);
             if (rb.position.Equals(ppAtual))
             {
-                if (index != pontosDePatrulha.Length-1)
+                if (index != pontosDePatrulha.Length - 1)
                 {
                     index++;
                     ppAtual = pontosDePatrulha[index];
@@ -131,5 +135,5 @@ public class PatrulhaInimigo : MonoBehaviour
                 }
             }
         }
-    } 
+    }
 }
