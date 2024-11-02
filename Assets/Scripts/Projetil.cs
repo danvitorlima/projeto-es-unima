@@ -4,27 +4,38 @@ using UnityEngine;
 
 public class Projetil : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private Animator animator;
+    [SerializeField]
+    private double duracao;
+    private double momentoDoDisparo;
+    private void Start()
     {
-        
+        momentoDoDisparo = Time.time;
+        animator = GetComponent<Animator>();
     }
-
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        if (Time.time - momentoDoDisparo >= duracao)
+        {
+            DestruirProjetil();
+        }
+    }
+    private void DestruirProjetil()
+    {
+        GetComponent<Rigidbody2D>().velocity = Vector3.zero;
+        animator.Play("explosao");
+        Destroy(gameObject, animator.GetCurrentAnimatorStateInfo(0).length);
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Inimigo"))
         {
             collision.gameObject.GetComponent<SistemaVida>().ReceberDano(50);
-            Destroy(gameObject);
+            DestruirProjetil();
         }
         else if (collision.gameObject.CompareTag("Parede"))
         {
-            Destroy(gameObject);
+            DestruirProjetil();
         }
     }
 }

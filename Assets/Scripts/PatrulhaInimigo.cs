@@ -9,9 +9,11 @@ public class PatrulhaInimigo : MonoBehaviour
     Vector3[] pontosDePatrulha;
     Vector3 ppAtual;
     int index;
+    private double lastAttackTime;
 
     void Start()
     {
+        lastAttackTime = -5;
         index = 0;
         pontosDePatrulha = EncontrarProximosPPs();
         ppAtual = pontosDePatrulha[index];
@@ -33,7 +35,22 @@ public class PatrulhaInimigo : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            rb.AddForce(-transform.up * 5000);
+            if(Time.time - lastAttackTime >= 1)
+            {
+                collision.gameObject.GetComponent<SistemaVida>().ReceberDano(10);
+                lastAttackTime = Time.time;
+            }
+        }
+    }
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            if (Time.time - lastAttackTime >= 1)
+            {
+                collision.gameObject.GetComponent<SistemaVida>().ReceberDano(10);
+                lastAttackTime = Time.time;
+            }
         }
     }
 

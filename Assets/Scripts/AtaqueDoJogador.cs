@@ -6,6 +6,9 @@ public class AtaqueDoJogador : MonoBehaviour
 {
     [SerializeField]
     private GameObject projetil;
+    [SerializeField]
+    private float cooldown;
+    private float lastAttackTime;
     void Start()
     {
     }
@@ -14,7 +17,12 @@ public class AtaqueDoJogador : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Instantiate(projetil,transform.position,Quaternion.identity).GetComponent<Rigidbody2D>().AddForce(transform.up * 400f);
+            if (Time.time - lastAttackTime >= cooldown)
+            {
+                var bala = Instantiate(projetil, transform.position + transform.up/1.6f, Quaternion.Euler(0, 0, transform.localEulerAngles.z + 90));
+                bala.GetComponent<Rigidbody2D>().AddForce(transform.up * 400f);
+                lastAttackTime = Time.time;
+            }
         }
     }
 }

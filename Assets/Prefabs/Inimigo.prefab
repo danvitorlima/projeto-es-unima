@@ -81,6 +81,7 @@ GameObject:
   - component: {fileID: 8904592051990066896}
   - component: {fileID: 6798677342893779176}
   - component: {fileID: 4467528218799626340}
+  - component: {fileID: 4246302808316766481}
   m_Layer: 3
   m_Name: Inimigo
   m_TagString: Inimigo
@@ -146,7 +147,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 3
   m_Sprite: {fileID: 7482667652216324306, guid: d9d65a884ab4c9042a5a720d044d00f0, type: 3}
-  m_Color: {r: 1, g: 0.25471687, b: 0.4269181, a: 1}
+  m_Color: {r: 0.5998602, g: 0, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -260,3 +261,24 @@ MonoBehaviour:
   vidaAtual: 0
   barraDeVidaUI: {fileID: 0}
   telaGameOver: {fileID: 0}
+--- !u!95 &4246302808316766481
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8137884149974592382}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 5c0a49882e800a441b3c0fea5b49372e, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

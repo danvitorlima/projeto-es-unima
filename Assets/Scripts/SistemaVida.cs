@@ -1,17 +1,38 @@
+using System;
+using System.Collections;
+using System.Drawing;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class SistemaVida : MonoBehaviour
 {
-    public float vidaMaxima = 100f;
-    public float vidaAtual;
-    public Image barraDeVidaUI;
+    [SerializeField]
+    private float vidaMaxima = 100f;
+    [SerializeField]
+    private float vidaAtual;
+    [SerializeField]
+    private Image barraDeVidaUI;
     [SerializeField]
     GameObject telaGameOver;
+    Animator animator;
+    private UnityEngine.Color corOriginal;
+    [SerializeField]
+    private Texture2D texturaCursor;
+    private Vector2 cursorHotspot;
+
     void Start()
     {
+        corOriginal = gameObject.GetComponent<SpriteRenderer>().color;
+        animator = GetComponent<Animator>();
         vidaAtual = vidaMaxima;
         AtualizarBarraDeVida();
+    }
+
+    private IEnumerator mudarCorTemporariamenteCorrotina()
+    {
+        GetComponent<SpriteRenderer>().color = UnityEngine.Color.red;
+        yield return new WaitForSeconds(0.2f);
+        GetComponent<SpriteRenderer>().color = corOriginal;
     }
 
     public void ReceberDano(float quantidade)
@@ -19,20 +40,17 @@ public class SistemaVida : MonoBehaviour
         vidaAtual -= quantidade;
         vidaAtual = Mathf.Clamp(vidaAtual, 0, vidaMaxima);
         AtualizarBarraDeVida();
-
         if (vidaAtual <= 0)
         {
             Morrer();
         }
+        else
+        {
+            StartCoroutine(mudarCorTemporariamenteCorrotina());
+        }
+        
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Inimigo"))
-        {
-            ReceberDano(10);
-        }
-    }
     public void Curar(float quantidade)
     {
         vidaAtual += quantidade;
@@ -47,13 +65,21 @@ public class SistemaVida : MonoBehaviour
             barraDeVidaUI.fillAmount = vidaAtual / vidaMaxima;
         }
     }
-
     private void Morrer()
     {
+        gameObject.GetComponent<Rigidbody2D>().simulated = false;
         if (gameObject.CompareTag("Player"))
         {
+            gameObject.GetComponent<MovimentacaoPersonagem>().enabled = false;
+            gameObject.GetComponent<AtaqueDoJogador>().enabled = false;
+        }
+        animator.Play("morte");
+        Destroy(gameObject, animator.GetCurrentAnimatorStateInfo(0).length);
+        if(telaGameOver != null)
+        {
+            cursorHotspot = new Vector2(texturaCursor.width / 2, texturaCursor.height / 2);
+            Cursor.SetCursor(texturaCursor, cursorHotspot, CursorMode.Auto);
             telaGameOver.SetActive(true);
         }
-        Destroy(gameObject);
     }
 }
