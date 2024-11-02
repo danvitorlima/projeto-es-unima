@@ -19,6 +19,8 @@ public class SistemaVida : MonoBehaviour
     [SerializeField]
     private Texture2D texturaCursor;
     private Vector2 cursorHotspot;
+    [SerializeField]
+    private GameObject xp;
 
     void Start()
     {
@@ -67,6 +69,10 @@ public class SistemaVida : MonoBehaviour
     }
     private void Morrer()
     {
+        if (gameObject.CompareTag("Inimigo"))
+        {
+            Instantiate(xp, gameObject.transform.position,Quaternion.identity).transform.parent = null;
+        }
         gameObject.GetComponent<Rigidbody2D>().simulated = false;
         if (gameObject.CompareTag("Player"))
         {

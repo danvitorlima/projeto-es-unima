@@ -261,6 +261,8 @@ MonoBehaviour:
   vidaAtual: 0
   barraDeVidaUI: {fileID: 0}
   telaGameOver: {fileID: 0}
+  texturaCursor: {fileID: 0}
+  xp: {fileID: 5157400291302070585, guid: 5b104e30adc2a984d9bd610e38f1954e, type: 3}
 --- !u!95 &4246302808316766481
 Animator:
   serializedVersion: 5

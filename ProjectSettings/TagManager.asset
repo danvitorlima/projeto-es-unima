@@ -11,6 +11,8 @@ TagManager:
   - GameOver
   - Pause
   - BarraDeVida
+  - BarraDeXP
+  - XP
   layers:
   - Default
   - TransparentFX
@@ -18,7 +20,7 @@ TagManager:
   - Inimigos
   - Water
   - UI
-  - 
+  - PostProcessing
   - 
   - 
   - 
