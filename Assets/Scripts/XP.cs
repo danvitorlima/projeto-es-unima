@@ -13,6 +13,8 @@ public class XP : MonoBehaviour
     [SerializeField]
     private float nivel;
     private Image barraDeXPUI;
+    [SerializeField]
+    private AudioClip sfx;
 
     void Start()
     {
@@ -43,6 +45,7 @@ public class XP : MonoBehaviour
         if (collision.gameObject.CompareTag("XP"))
         {
             ganharXP(10);
+            GetComponent<AudioSource>().PlayOneShot(sfx);
             Destroy(collision.gameObject);
         }
     }

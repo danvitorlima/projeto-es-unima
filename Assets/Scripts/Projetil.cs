@@ -30,6 +30,7 @@ public class Projetil : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Inimigo"))
         {
+            GameObject.FindGameObjectWithTag("SFX").GetComponent<AudioSource>().Play();
             collision.gameObject.GetComponent<SistemaVida>().ReceberDano(50);
             DestruirProjetil();
         }

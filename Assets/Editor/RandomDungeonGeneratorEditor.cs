@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -21,6 +22,18 @@ public class RandomDungeonGeneratorEditor : Editor
             foreach (var inimigo in GameObject.FindGameObjectsWithTag("Inimigo"))
             {
                 DestroyImmediate(inimigo);
+            }
+            foreach (var background in GameObject.FindGameObjectsWithTag("Background"))
+            {
+                DestroyImmediate(background);
+            }
+            foreach (var item in GameObject.FindGameObjectsWithTag("Item"))
+            {
+                DestroyImmediate(item);
+            }
+            foreach (var xp in GameObject.FindGameObjectsWithTag("XP"))
+            {
+                DestroyImmediate(xp);
             }
             generator.GenerateDungeon();
         }

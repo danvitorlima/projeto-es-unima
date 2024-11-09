@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.WebSockets;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
@@ -16,6 +17,17 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
     private GameObject jogador;
     [SerializeField]
     private GameObject inimigo;
+    [SerializeField]
+    private GameObject estrelas;
+    private GameObject[] itens;
+    [SerializeField]
+    private int maxItensPorSala;
+    [SerializeField]
+    private int minItensPorSala;
+    [SerializeField]
+    private int maxInimigosPorSala;
+    [SerializeField]
+    private int minInimigosPorSala;
 
     protected override void RunProceduralGeneration()
     {
@@ -27,6 +39,7 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
     }
     private void CorridorFirstGeneration()
     {
+        itens = Resources.LoadAll<GameObject>("Prefabs/Itens");
         HashSet<Vector2Int> floorPositions = new HashSet<Vector2Int>();
         HashSet<Vector2Int> potentialRoomPositions = new HashSet<Vector2Int>();
         Vector2Int escadaPos = new Vector2Int();
@@ -34,18 +47,23 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
 
         CreateCorridors(floorPositions, potentialRoomPositions);
 
-        var roomPosEPontosDePatrulha = CreateRooms(potentialRoomPositions);
+        var roomPosPontosDePatrulhaESpawnDeItens = CreateRooms(potentialRoomPositions);
 
-        HashSet<Vector2Int> roomPositions = new HashSet<Vector2Int>(roomPosEPontosDePatrulha.Item1);
+        HashSet<Vector2Int> roomPositions = new HashSet<Vector2Int>(roomPosPontosDePatrulhaESpawnDeItens.Item1);
 
         List<Vector2Int> deadEnds = FindAllDeadEnds(floorPositions);
 
-        roomPosEPontosDePatrulha.Item2.UnionWith(CreateRoomsAtDeadEnd(deadEnds, roomPositions));
-        
+        var pontosDepatrulhaESpawnDeItens = CreateRoomsAtDeadEnd(deadEnds, roomPositions);
+
+        roomPosPontosDePatrulhaESpawnDeItens.Item2.UnionWith(pontosDepatrulhaESpawnDeItens.Item1);
+        roomPosPontosDePatrulhaESpawnDeItens.Item3.UnionWith(pontosDepatrulhaESpawnDeItens.Item2);
+
         float distMax = 0;
         float distMin = Mathf.Infinity;
+        //iterando no centro de cada sala
         foreach (var position in potentialRoomPositions.Where(n => roomPositions.Contains(n)))
         {
+            Instantiate(estrelas, (Vector3Int)position, Quaternion.identity);
             float dist = Vector2.Distance(position, Vector2.zero);
             if (dist < distMin)
             {
@@ -58,11 +76,21 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
                 escadaPos = position;
             }
         }
-        foreach (var pp in roomPosEPontosDePatrulha.Item2)
+        //instanciando pontos de patrulha
+        foreach (var pp in roomPosPontosDePatrulhaESpawnDeItens.Item2)
         {
             Instantiate(inimigo, (Vector3Int)pp, Quaternion.identity);
             tilemapVisualizer.ColocarPP(pp);
         }
+        //instanciando itens
+        foreach (var item in roomPosPontosDePatrulhaESpawnDeItens.Item3)
+        {
+            //TODO fazer spawn aleatorio de itens baseado na probabilidade de spawn
+            Instantiate(itens[0], (Vector3Int)item, Quaternion.identity);
+        }
+
+
+
 
         floorPositions.UnionWith(roomPositions);
         tilemapVisualizer.PaintFloorTiles(floorPositions);
@@ -72,23 +100,29 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
         jogador.SetActive(true);
     }
 
-    private HashSet<Vector2Int> CreateRoomsAtDeadEnd(List<Vector2Int> deadEnds, HashSet<Vector2Int> roomFloors)
+    private Tuple<HashSet<Vector2Int>, HashSet<Vector2Int>> CreateRoomsAtDeadEnd(List<Vector2Int> deadEnds, HashSet<Vector2Int> roomFloors)
     {
         HashSet<Vector2Int> pontosDePatrulha = new HashSet<Vector2Int>();
+        HashSet<Vector2Int> spawnDeItens = new HashSet<Vector2Int>();
         foreach (var position in deadEnds)
         {
             if (roomFloors.Contains(position) == false)
             {
                 var room = RunRandomWalk(randomWalkParameters, position);
-                for (int i = 0; i < 6; i++)
+                for (int i = 0; i < UnityEngine.Random.Range(minInimigosPorSala, maxInimigosPorSala + 1); i++)
                 {
                     int index = UnityEngine.Random.Range(0, room.Count);
                     pontosDePatrulha.Add(room.ToList()[index]);
                 }
+                for (int i = 0; i < UnityEngine.Random.Range(minItensPorSala, maxItensPorSala + 1); i++)
+                {
+                    int index = UnityEngine.Random.Range(0, room.Count);
+                    spawnDeItens.Add(room.ToList()[index]);
+                }
                 roomFloors.UnionWith(room);
             }
         }
-        return pontosDePatrulha;
+        return Tuple.Create(pontosDePatrulha, spawnDeItens);
     }
 
     private List<Vector2Int> FindAllDeadEnds(HashSet<Vector2Int> floorPositions)
@@ -109,9 +143,10 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
         return deadEnds;
     }
 
-    private Tuple<HashSet<Vector2Int>, HashSet<Vector2Int>> CreateRooms(HashSet<Vector2Int> potentialRoomPositions)
+    private Tuple<HashSet<Vector2Int>, HashSet<Vector2Int>, HashSet<Vector2Int>> CreateRooms(HashSet<Vector2Int> potentialRoomPositions)
     {
         HashSet<Vector2Int> pontosDePatrulha = new HashSet<Vector2Int>();
+        HashSet<Vector2Int> spawnDeItens = new HashSet<Vector2Int>();
         HashSet<Vector2Int> roomPositions = new HashSet<Vector2Int>();
         int roomToCreateCount = Mathf.RoundToInt(potentialRoomPositions.Count * roomPercent);
 
@@ -121,14 +156,19 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
         foreach (var roomPosition in roomsToCreate)
         {
             var roomFloor = RunRandomWalk(randomWalkParameters, roomPosition);
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < UnityEngine.Random.Range(minInimigosPorSala, maxInimigosPorSala + 1); i++)
             {
                 int index = UnityEngine.Random.Range(0, roomFloor.Count);
                 pontosDePatrulha.Add(roomFloor.ToList()[index]);
             }
+            for (int i = 0; i < UnityEngine.Random.Range(minItensPorSala, maxItensPorSala + 1); i++)
+            {
+                int index = UnityEngine.Random.Range(0, roomFloor.Count);
+                spawnDeItens.Add(roomFloor.ToList()[index]);
+            }
             roomPositions.UnionWith(roomFloor);
         }
-        return Tuple.Create(roomPositions, pontosDePatrulha);
+        return Tuple.Create(roomPositions, pontosDePatrulha, spawnDeItens);
     }
 
     private void CreateCorridors(HashSet<Vector2Int> floorPositions, HashSet<Vector2Int> potentialRoomPositions)
