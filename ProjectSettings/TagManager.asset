@@ -13,6 +13,10 @@ TagManager:
   - BarraDeVida
   - BarraDeXP
   - XP
+  - Inventario
+  - Slot
+  - SFX
+  - Background
   layers:
   - Default
   - TransparentFX
