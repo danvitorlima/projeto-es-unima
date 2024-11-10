@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NavMeshPlus.Components;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,10 +29,14 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
     private int maxInimigosPorSala;
     [SerializeField]
     private int minInimigosPorSala;
+    [SerializeField]
+    private NavMeshSurface navMesh;
 
     protected override void RunProceduralGeneration()
     {
         CorridorFirstGeneration();
+
+        StartCoroutine(MontarNavMesh());
     }
     private void Start()
     {
@@ -184,5 +189,10 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
             potentialRoomPositions.Add(currentPosition);
             floorPositions.UnionWith(corridor);
         }
+    }
+    IEnumerator MontarNavMesh()
+    {
+        yield return new WaitForSeconds(0.01f);
+        navMesh.BuildNavMesh();
     }
 }

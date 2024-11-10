@@ -1,10 +1,13 @@
+using NavMeshPlus.Components;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class PassarDeNivel : MonoBehaviour
 {
     private GameObject dungeonGenerator;
+
     void Start()
     {
         dungeonGenerator = GameObject.FindWithTag("GeradorDeNivel");
@@ -15,10 +18,5 @@ public class PassarDeNivel : MonoBehaviour
         {
             dungeonGenerator.GetComponent<CorridorFirstDungeonGenerator>().GenerateDungeon();
         }
-    }
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
