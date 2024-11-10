@@ -143,3 +143,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 201dacba693a6854a92dfa25bbac22a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dungeonGenerator: {fileID: 0}
+  navMesh: {fileID: 0}

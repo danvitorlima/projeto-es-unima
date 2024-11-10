@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Drawing;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UI;
 
 public class SistemaVida : MonoBehaviour
@@ -71,6 +72,7 @@ public class SistemaVida : MonoBehaviour
     {
         if (gameObject.CompareTag("Inimigo"))
         {
+            GetComponent<NavMeshAgent>().enabled = false;
             Instantiate(xp, gameObject.transform.position,Quaternion.identity).transform.parent = null;
         }
         gameObject.GetComponent<Rigidbody2D>().simulated = false;

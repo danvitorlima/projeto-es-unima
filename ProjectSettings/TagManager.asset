@@ -17,6 +17,8 @@ TagManager:
   - Slot
   - SFX
   - Background
+  - Item
+  - NavMesh
   layers:
   - Default
   - TransparentFX

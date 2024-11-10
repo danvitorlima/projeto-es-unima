@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NavMeshPlus.Components;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,10 +29,14 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
     private int maxInimigosPorSala;
     [SerializeField]
     private int minInimigosPorSala;
+    [SerializeField]
+    private NavMeshSurface navMesh;
 
     protected override void RunProceduralGeneration()
     {
         CorridorFirstGeneration();
+
+        StartCoroutine(MontarNavMesh());
     }
     private void Start()
     {
@@ -79,14 +84,14 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
         //instanciando pontos de patrulha
         foreach (var pp in roomPosPontosDePatrulhaESpawnDeItens.Item2)
         {
-            Instantiate(inimigo, (Vector3Int)pp, Quaternion.identity);
+            Instantiate(inimigo, (Vector2)pp + Vector2.one / 2, Quaternion.identity);
             tilemapVisualizer.ColocarPP(pp);
         }
         //instanciando itens
         foreach (var item in roomPosPontosDePatrulhaESpawnDeItens.Item3)
         {
             //TODO fazer spawn aleatorio de itens baseado na probabilidade de spawn
-            Instantiate(itens[0], (Vector3Int)item, Quaternion.identity);
+            Instantiate(itens[0], item, Quaternion.identity);
         }
 
 
@@ -100,10 +105,10 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
         jogador.SetActive(true);
     }
 
-    private Tuple<HashSet<Vector2Int>, HashSet<Vector2Int>> CreateRoomsAtDeadEnd(List<Vector2Int> deadEnds, HashSet<Vector2Int> roomFloors)
+    private Tuple<HashSet<Vector2Int>, HashSet<Vector2>> CreateRoomsAtDeadEnd(List<Vector2Int> deadEnds, HashSet<Vector2Int> roomFloors)
     {
         HashSet<Vector2Int> pontosDePatrulha = new HashSet<Vector2Int>();
-        HashSet<Vector2Int> spawnDeItens = new HashSet<Vector2Int>();
+        HashSet<Vector2> spawnDeItens = new HashSet<Vector2>();
         foreach (var position in deadEnds)
         {
             if (roomFloors.Contains(position) == false)
@@ -117,7 +122,7 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
                 for (int i = 0; i < UnityEngine.Random.Range(minItensPorSala, maxItensPorSala + 1); i++)
                 {
                     int index = UnityEngine.Random.Range(0, room.Count);
-                    spawnDeItens.Add(room.ToList()[index]);
+                    spawnDeItens.Add(room.ToList()[index] + Vector2.one / 2);
                 }
                 roomFloors.UnionWith(room);
             }
@@ -143,10 +148,10 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
         return deadEnds;
     }
 
-    private Tuple<HashSet<Vector2Int>, HashSet<Vector2Int>, HashSet<Vector2Int>> CreateRooms(HashSet<Vector2Int> potentialRoomPositions)
+    private Tuple<HashSet<Vector2Int>, HashSet<Vector2Int>, HashSet<Vector2>> CreateRooms(HashSet<Vector2Int> potentialRoomPositions)
     {
         HashSet<Vector2Int> pontosDePatrulha = new HashSet<Vector2Int>();
-        HashSet<Vector2Int> spawnDeItens = new HashSet<Vector2Int>();
+        HashSet<Vector2> spawnDeItens = new HashSet<Vector2>();
         HashSet<Vector2Int> roomPositions = new HashSet<Vector2Int>();
         int roomToCreateCount = Mathf.RoundToInt(potentialRoomPositions.Count * roomPercent);
 
@@ -164,7 +169,7 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
             for (int i = 0; i < UnityEngine.Random.Range(minItensPorSala, maxItensPorSala + 1); i++)
             {
                 int index = UnityEngine.Random.Range(0, roomFloor.Count);
-                spawnDeItens.Add(roomFloor.ToList()[index]);
+                spawnDeItens.Add(roomFloor.ToList()[index] + Vector2.one / 2);
             }
             roomPositions.UnionWith(roomFloor);
         }
@@ -184,5 +189,10 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
             potentialRoomPositions.Add(currentPosition);
             floorPositions.UnionWith(corridor);
         }
+    }
+    IEnumerator MontarNavMesh()
+    {
+        yield return new WaitForSeconds(0.01f);
+        navMesh.BuildNavMesh();
     }
 }
