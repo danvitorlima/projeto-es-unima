@@ -25,14 +25,14 @@ public class Slot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public void AtualizarSlot(Item _item, int _quantidade)
     {
         item = _item;
+        Debug.Log("??" + item.nome);
         quantidade.GetComponent<TextMeshProUGUI>().text = _quantidade.ToString();
         iconeItem.GetComponent<Image>().sprite = item.icone;
     }
     public void ConsumirItem()
     {
-        if (item != null)
+        if (item != null && item.Usar())
         {
-            item.Usar();
             RemoverItem();
         }
     }
@@ -42,14 +42,7 @@ public class Slot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     }
     public void SetQuantidade(int _quantidade)
     {
-        if (_quantidade == 0)
-        {
-            RemoverItem();
-        }
-        else if (_quantidade > 0)
-        {
-            quantidade.GetComponent<TextMeshProUGUI>().text = _quantidade.ToString();
-        }
+        quantidade.GetComponent<TextMeshProUGUI>().text = _quantidade.ToString();
     }
     public void RemoverItem()
     {
@@ -60,13 +53,10 @@ public class Slot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 item = null;
                 iconeItem.GetComponent<Image>().sprite = null;
                 iconeItem.SetActive(false);
-                SetQuantidade(0);
                 quantidade.SetActive(false);
+                GetComponent<Image>().color = new Color32(90, 129, 210, 255);
             }
-            else
-            {
-                SetQuantidade(GetQuantidade() - 1);
-            }
+            SetQuantidade(GetQuantidade() - 1);
         }
     }
     public void OnPointerEnter(PointerEventData eventData)

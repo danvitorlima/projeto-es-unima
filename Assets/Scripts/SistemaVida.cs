@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Drawing;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -22,9 +23,11 @@ public class SistemaVida : MonoBehaviour
     private Vector2 cursorHotspot;
     [SerializeField]
     private GameObject xp;
+    private TextMeshProUGUI contadorDeVida;
 
     void Start()
     {
+        contadorDeVida = GameObject.FindGameObjectWithTag("Vida").GetComponent<TextMeshProUGUI>();
         corOriginal = gameObject.GetComponent<SpriteRenderer>().color;
         animator = GetComponent<Animator>();
         vidaAtual = vidaMaxima;
@@ -54,11 +57,16 @@ public class SistemaVida : MonoBehaviour
         
     }
 
-    public void Curar(float quantidade)
+    public bool Curar(int quantidade)
     {
-        vidaAtual += quantidade;
-        vidaAtual = Mathf.Clamp(vidaAtual, 0, vidaMaxima);
-        AtualizarBarraDeVida();
+        if (quantidade + vidaAtual <= vidaMaxima)
+        {
+            vidaAtual += quantidade;
+            vidaAtual = Mathf.Clamp(vidaAtual, 0, vidaMaxima);
+            AtualizarBarraDeVida();
+            return true;
+        }
+        return false;
     }
 
     private void AtualizarBarraDeVida()
@@ -66,6 +74,7 @@ public class SistemaVida : MonoBehaviour
         if (barraDeVidaUI != null)
         {
             barraDeVidaUI.fillAmount = vidaAtual / vidaMaxima;
+            contadorDeVida.text = vidaAtual.ToString(); 
         }
     }
     private void Morrer()

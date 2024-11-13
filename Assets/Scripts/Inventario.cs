@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 public class Inventario : MonoBehaviour
 {
@@ -38,22 +39,22 @@ public class Inventario : MonoBehaviour
     public bool AdicionarItem(Item item, int quantidade = 1)
     {
         slotsDisponiveis = slotsDoInventario.Take(slots).Where(a => a.GetComponent<Slot>().item == null).Count();
-        Debug.Log("slots disponiveis: " + slotsDisponiveis);
+        //Debug.Log("slots disponiveis: " + slotsDisponiveis);
         float slotsNecessarios = (float)quantidade / item.stack;
 
         var slotsComItem = slotsDoInventario.Where(a => a.GetComponent<Slot>().item?.nome == item.nome
         && a.GetComponent<Slot>().GetQuantidade() < item.stack).Select(a => a.GetComponent<Slot>()).ToList();
 
-        Debug.Log(slotsComItem == null);
+        //Debug.Log(slotsComItem == null);
 
         float slotsResiduais = 0;
 
-        Debug.Log("Tentando adicionar " + quantidade);
+        //Debug.Log("Tentando adicionar " + quantidade);
 
         if (slotsComItem.Any())
         {
             slotsResiduais = slotsComItem.Select(a => (item.stack - (float)a.GetQuantidade()) / item.stack).Sum();
-            Debug.Log("Slots Residuais: " + slotsResiduais);
+            //Debug.Log("Slots Residuais: " + slotsResiduais);
         }
         //se a quantidade de slots for suficiente
         if (slotsDisponiveis + slotsResiduais >= slotsNecessarios)
@@ -72,13 +73,13 @@ public class Inventario : MonoBehaviour
                     //caso a soma do ultimo slot com o item e a quantidade adicionada seja maior que um stack
                     if (quantidade + slot.GetQuantidade() > item.stack)
                     {
-                        Debug.Log(quantidade);
+                        //Debug.Log(quantidade);
                         quantidade -= item.stack - slot.GetQuantidade();
                         slot.SetQuantidade(slot.GetQuantidade() + item.stack - slot.GetQuantidade());
                     }
                     else
                     {
-                        Debug.Log(quantidade);
+                        //Debug.Log(quantidade);
                         slot.SetQuantidade(slot.GetQuantidade() + quantidade);
                         quantidade = 0;
                         return true;
@@ -89,14 +90,14 @@ public class Inventario : MonoBehaviour
                     //quantidade menor que o stack
                     if (quantidade < item.stack)
                     {
-                        Debug.Log(quantidade);
+                        //Debug.Log(quantidade);
                         slotsDoInventario.FirstOrDefault(a => a.GetComponent<Slot>().item == null).GetComponent<Slot>().AtualizarSlot(item, quantidade);
                         quantidade = 0;
                     }
                     //quantidade maior que o stack
                     else
                     {
-                        Debug.Log(quantidade);
+                        //Debug.Log(quantidade);
                         slotsDoInventario.FirstOrDefault(a => a.GetComponent<Slot>().item == null).GetComponent<Slot>().AtualizarSlot(item, item.stack);
                         quantidade -= item.stack;
                     }
@@ -122,10 +123,29 @@ public class Inventario : MonoBehaviour
             {
                 if (slot.GetComponent<Slot>().item != null)
                 {
+                    var _item = slot.GetComponent<Slot>().item;
                     slot.GetComponent<Slot>().quantidade.SetActive(true);
                     slot.GetComponent<Slot>().iconeItem.SetActive(true);
+                    switch (_item.tier)
+                    {
+                        case 0:
+                            slot.GetComponent<Image>().color = new Color32(90, 129, 210, 255);
+                            break;
+                        case 1:
+                            slot.GetComponent<Image>().color = new Color(0.537f, 0.620f, 1.0f);
+                            break;
+                        case 2:
+                            slot.GetComponent<Image>().color = new Color(0.765f, 0.325f, 1.0f);
+                            break;
+                        case 3:
+                            slot.GetComponent<Image>().color = new Color(1.0f, 0.769f, 0.0f);
+                            break;
+                    }
                 }
-                slot.GetComponent<Image>().color = new Color32(90, 129, 210, 255);
+                else
+                {
+                    slot.GetComponent<Image>().color = new Color32(90, 129, 210, 255);
+                }
                 slot.GetComponent<EventTrigger>().enabled = true;
             }
             else
@@ -141,6 +161,10 @@ public class Inventario : MonoBehaviour
     {
         if (telaDeInventario.activeSelf)
         {
+            foreach (var slot in slotsDoInventario)
+            {
+                slot.GetComponent<Slot>().DesativarH();
+            }
             Cursor.SetCursor(texturaCursor, cursorHotspot, CursorMode.Auto);
             telaDeInventario.SetActive(false);
             jogador.GetComponent<AtaqueDoJogador>().enabled = true;
