@@ -132,7 +132,7 @@ public class Inventario : MonoBehaviour
                             slot.GetComponent<Image>().color = new Color32(90, 129, 210, 255);
                             break;
                         case 1:
-                            slot.GetComponent<Image>().color = new Color(0.537f, 0.620f, 1.0f);
+                            slot.GetComponent<Image>().color = new Color(0.275f, 0.375f, 1.0f);
                             break;
                         case 2:
                             slot.GetComponent<Image>().color = new Color(0.765f, 0.325f, 1.0f);
@@ -168,6 +168,8 @@ public class Inventario : MonoBehaviour
             Cursor.SetCursor(texturaCursor, cursorHotspot, CursorMode.Auto);
             telaDeInventario.SetActive(false);
             jogador.GetComponent<AtaqueDoJogador>().enabled = true;
+            jogador.GetComponent<PolygonCollider2D>().enabled = true;
+            slotsDoInventario[0].GetComponent<Slot>().campoNomeDoItem.SetActive(false);
             Time.timeScale = 1;
 
         }
@@ -178,6 +180,8 @@ public class Inventario : MonoBehaviour
             AtualizarInventario();
             //pausa o jogo
             jogador.GetComponent<AtaqueDoJogador>().enabled = false;
+            jogador.GetComponent<PolygonCollider2D>().enabled = false;
+            slotsDoInventario[0].GetComponent<Slot>().campoNomeDoItem.SetActive(true);
             Time.timeScale = 0;
         }
     }
