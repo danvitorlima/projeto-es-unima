@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: -831440217517615539}
   - component: {fileID: 8202763652987043547}
   m_Layer: 0
-  m_Name: PocaoDeCura
+  m_Name: "Po\xE7\xE3o de Cura 2"
   m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,8 +29,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 773aee9fb72f8b44bab4739db7580a26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _tier: 2
 --- !u!212 &-831440217517615539
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -88,7 +89,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_Sprite: {fileID: 1043529015, guid: 3fc6e665a0f182e46967a91930971206, type: 3}
-  m_Color: {r: 1, g: 0.707, b: 0.707, a: 1}
+  m_Color: {r: 0.7647059, g: 0.3254902, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

@@ -17,6 +17,7 @@ public class PassarDeNivel : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             dungeonGenerator.GetComponent<CorridorFirstDungeonGenerator>().GenerateDungeon();
+            GameObject.FindGameObjectWithTag("Player").GetComponent<AtaqueDoJogador>().resetarMunicao();
         }
     }
 }

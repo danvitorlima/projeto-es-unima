@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.WebSockets;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
@@ -20,7 +21,7 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
     private GameObject inimigo;
     [SerializeField]
     private GameObject estrelas;
-    private GameObject[] itens;
+    private List<List<GameObject>> itens;
     [SerializeField]
     private int maxItensPorSala;
     [SerializeField]
@@ -42,9 +43,31 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
     {
         GenerateDungeon();
     }
+
+    private GameObject GerarItem()
+    {
+        var prob = UnityEngine.Random.value;
+        int i;
+
+        // item comum 80%
+        if (prob < 0.8f) { i = 0; }
+
+        // item raro 15%
+        else if (prob < 0.95f) { i = 1; }
+
+        // item epico 4%
+        else if (prob < 0.99f) { i = 2; }
+
+        // item lendario 1%
+        else{ i = 3; }
+
+        return itens[i][UnityEngine.Random.Range(0, itens[i].Count)];
+    }
+
     private void CorridorFirstGeneration()
     {
-        itens = Resources.LoadAll<GameObject>("Prefabs/Itens");
+        //separando itens por tier
+        itens = Resources.LoadAll<GameObject>("Prefabs/Itens").GroupBy(x => x.GetComponent<Item>().tier).Select(tier => tier.ToList()).ToList();
         HashSet<Vector2Int> floorPositions = new HashSet<Vector2Int>();
         HashSet<Vector2Int> potentialRoomPositions = new HashSet<Vector2Int>();
         Vector2Int escadaPos = new Vector2Int();
@@ -64,23 +87,38 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
         roomPosPontosDePatrulhaESpawnDeItens.Item3.UnionWith(pontosDepatrulhaESpawnDeItens.Item2);
 
         float distMax = 0;
-        float distMin = Mathf.Infinity;
+        //float distMin = Mathf.Infinity;
+
+        var centroDasSalas = potentialRoomPositions.Where(n => roomPositions.Contains(n));
         //iterando no centro de cada sala
-        foreach (var position in potentialRoomPositions.Where(n => roomPositions.Contains(n)))
+        foreach (var position in centroDasSalas)
         {
             Instantiate(estrelas, (Vector3Int)position, Quaternion.identity);
-            float dist = Vector2.Distance(position, Vector2.zero);
-            if (dist < distMin)
+            foreach (var _position in centroDasSalas)
             {
-                distMin = dist;
-                spawnPos = position;
+                float dist = Vector2.Distance(position, _position);
+                if (dist > distMax)
+                {
+                    distMax = dist;
+                    spawnPos = position;
+                    escadaPos = _position;
+                }
             }
-            if (dist > distMax)
-            {
-                distMax = dist;
-                escadaPos = position;
-            }
+            //float dist = Vector2.Distance(position, Vector2.zero);
+            //if (dist < distMin)
+            //{
+            //    distMin = dist;
+            //    spawnPos = position;
+            //}
+            //else if (dist > distMax)
+            //{
+            //    distMax = dist;
+            //    escadaPos = position;
+            //}
         }
+
+        //definindo pontos
+
         //instanciando pontos de patrulha
         foreach (var pp in roomPosPontosDePatrulhaESpawnDeItens.Item2)
         {
@@ -88,14 +126,10 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
             tilemapVisualizer.ColocarPP(pp);
         }
         //instanciando itens
-        foreach (var item in roomPosPontosDePatrulhaESpawnDeItens.Item3)
+        foreach (var itemPos in roomPosPontosDePatrulhaESpawnDeItens.Item3)
         {
-            //TODO fazer spawn aleatorio de itens baseado na probabilidade de spawn
-            Instantiate(itens[0], item, Quaternion.identity);
+            Instantiate(GerarItem(), itemPos, Quaternion.identity);
         }
-
-
-
 
         floorPositions.UnionWith(roomPositions);
         tilemapVisualizer.PaintFloorTiles(floorPositions);

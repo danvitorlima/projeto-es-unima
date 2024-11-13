@@ -1,14 +1,30 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public abstract class Item : MonoBehaviour
 {
     public string nome { get; protected set; }
-    public bool equipavel { get; protected set; }
+    public bool equipavel { get; protected set; } = false;
     private bool capturavel = false;
-    public int stack { get; protected set; }
+    public int stack { get; protected set; } = 5;
     public Sprite icone { get; protected set; }
+    [SerializeField]
+    private int _tier;
+    public int tier
+    {
+        get { return _tier; }
+        set
+        {
+            if (value >= 0 || value < 4)
+            {
+                _tier = value;
+            }
+        }
+    }
+
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -28,13 +44,12 @@ public abstract class Item : MonoBehaviour
     {
         if (capturavel && Input.GetKeyDown(KeyCode.E))
         {
-            //quantidade de 65 itens para testar
             if (GameObject.FindGameObjectWithTag("Player").GetComponent<Inventario>().AdicionarItem(this))
             {
                 gameObject.SetActive(false);
             }
         }
     }
-    public abstract void Usar();
+    public abstract bool Usar();
 
 }
