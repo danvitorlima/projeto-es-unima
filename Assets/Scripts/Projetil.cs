@@ -5,11 +5,13 @@ using UnityEngine;
 public class Projetil : MonoBehaviour
 {
     private Animator animator;
-    [SerializeField]
     private double duracao;
     private double momentoDoDisparo;
+    private AudioSource sfx;
     private void Start()
     {
+        sfx = GameObject.FindGameObjectWithTag("SFX").GetComponent<AudioSource>();
+        duracao = GameObject.FindGameObjectWithTag("Player").GetComponent<AtaqueDoJogador>().duracaoDeTiro;
         momentoDoDisparo = Time.time;
         animator = GetComponent<Animator>();
     }
@@ -30,7 +32,7 @@ public class Projetil : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Inimigo"))
         {
-            GameObject.FindGameObjectWithTag("SFX").GetComponent<AudioSource>().Play();
+            sfx.Play();
             collision.gameObject.GetComponent<SistemaVida>().ReceberDano(50);
             DestruirProjetil();
         }

@@ -161,6 +161,7 @@ public class Inventario : MonoBehaviour
     {
         if (telaDeInventario.activeSelf)
         {
+            var objetoNomeDoItem = slotsDoInventario[0].GetComponent<Slot>().campoNomeDoItem;
             foreach (var slot in slotsDoInventario)
             {
                 slot.GetComponent<Slot>().DesativarH();
@@ -169,7 +170,8 @@ public class Inventario : MonoBehaviour
             telaDeInventario.SetActive(false);
             jogador.GetComponent<AtaqueDoJogador>().enabled = true;
             jogador.GetComponent<PolygonCollider2D>().enabled = true;
-            slotsDoInventario[0].GetComponent<Slot>().campoNomeDoItem.SetActive(false);
+            objetoNomeDoItem.SetActive(false);
+            objetoNomeDoItem.GetComponent<TextMeshProUGUI>().text = null;
             Time.timeScale = 1;
 
         }

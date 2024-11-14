@@ -28,6 +28,7 @@ public class AtaqueDoJogador : MonoBehaviour
     [SerializeField]
     private float tempoDeRecarga = 2;
     private AudioSource audioSource;
+    public float duracaoDeTiro;
 
     void Start()
     {
