@@ -166,21 +166,17 @@ public class Inventario : MonoBehaviour
             {
                 slot.GetComponent<Slot>().DesativarH();
             }
-            Cursor.SetCursor(texturaCursor, cursorHotspot, CursorMode.Auto);
             telaDeInventario.SetActive(false);
             jogador.GetComponent<AtaqueDoJogador>().enabled = true;
             jogador.GetComponent<PolygonCollider2D>().enabled = true;
             objetoNomeDoItem.SetActive(false);
             objetoNomeDoItem.GetComponent<TextMeshProUGUI>().text = null;
             Time.timeScale = 1;
-
         }
         else
         {
-            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
             telaDeInventario.SetActive(true);
             AtualizarInventario();
-            //pausa o jogo
             jogador.GetComponent<AtaqueDoJogador>().enabled = false;
             jogador.GetComponent<PolygonCollider2D>().enabled = false;
             slotsDoInventario[0].GetComponent<Slot>().campoNomeDoItem.SetActive(true);
@@ -200,7 +196,7 @@ public class Inventario : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyUp(KeyCode.Tab))
+        if (Input.GetKeyUp(KeyCode.Tab) && (!GameObject.FindGameObjectWithTag("Tela") || GameObject.FindGameObjectWithTag("Tela") == telaDeInventario))
         {
             AbrirInventario();
         }

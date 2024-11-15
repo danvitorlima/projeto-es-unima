@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,9 +17,13 @@ public class XP : MonoBehaviour
     private Image barraDeXPUI;
     [SerializeField]
     private AudioClip sfx;
+    public int pontosDeAtributo;
+    [SerializeField]
+    private GameObject telaDeProgressaoDeAtributos;
 
     void Start()
     {
+        pontosDeAtributo = 0;
         nivel = 1;
         xpAtual = 0;
         barraDeXPUI = GameObject.FindGameObjectWithTag("BarraDeXP").GetComponent<Image>();
@@ -30,6 +36,7 @@ public class XP : MonoBehaviour
         {
             xpAtual -= xpMaximo;
             nivel++;
+            pontosDeAtributo++;
             xpMaximo = 100 * Mathf.Pow(1.5f, nivel - 1);
         }
         atualizarBarraXP();
@@ -44,20 +51,35 @@ public class XP : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("XP"))
         {
-            ganharXP(10);
+            ganharXP(100);
             GetComponent<AudioSource>().PlayOneShot(sfx);
             Destroy(collision.gameObject);
         }
     }
-    private void O(Collider2D collision)
-    {
 
+    private void AbrirProgressaoDeAtributos()
+    {
+        if (telaDeProgressaoDeAtributos.activeSelf)
+        {
+            telaDeProgressaoDeAtributos.SetActive(false);
+            GetComponent<AtaqueDoJogador>().enabled = true;
+            GetComponent<PolygonCollider2D>().enabled = true;
+            Time.timeScale = 1;
+        }
+        else
+        {
+            telaDeProgressaoDeAtributos.SetActive(true);
+            GetComponent<AtaqueDoJogador>().enabled = false;
+            GetComponent<PolygonCollider2D>().enabled = false;
+            Time.timeScale = 0;
+        }
     }
 
-
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-
+        if (Input.GetKeyDown(KeyCode.X) && (!GameObject.FindGameObjectWithTag("Tela") || GameObject.FindGameObjectWithTag("Tela") == telaDeProgressaoDeAtributos))
+        {
+            AbrirProgressaoDeAtributos();
+        }
     }
 }

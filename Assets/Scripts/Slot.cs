@@ -15,10 +15,6 @@ public class Slot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public GameObject quantidade;
     public Item item { get; private set; }
     private bool deletavel = false;
-    public void AtivarH()
-    {
-        highlight.SetActive(true);
-    }
     public void DesativarH()
     {
         highlight.SetActive(false);

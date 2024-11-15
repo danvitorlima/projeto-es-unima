@@ -20,6 +20,9 @@ TagManager:
   - Item
   - NavMesh
   - Vida
+  - Atributo
+  - TelaDeProgressao
+  - Tela
   layers:
   - Default
   - TransparentFX
