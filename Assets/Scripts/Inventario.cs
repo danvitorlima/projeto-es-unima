@@ -184,10 +184,11 @@ public class Inventario : MonoBehaviour
         }
     }
 
-    public void AumentarSlots(int quantidade)
+    public void AumentarSlots(int quantidade = 1)
     {
-        if (quantidade + slots < 16)
+        if (quantidade + slots <= 16)
         {
+            Debug.Log("Aumentou o inventario");
             slots += quantidade;
         }
     }

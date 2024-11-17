@@ -6,14 +6,19 @@ public class Projetil : MonoBehaviour
 {
     private Animator animator;
     private double duracao;
+    private int dano;
     private double momentoDoDisparo;
     private AudioSource sfx;
     private void Start()
     {
         sfx = GameObject.FindGameObjectWithTag("SFX").GetComponent<AudioSource>();
-        duracao = GameObject.FindGameObjectWithTag("Player").GetComponent<AtaqueDoJogador>().duracaoDeTiro;
         momentoDoDisparo = Time.time;
         animator = GetComponent<Animator>();
+    }
+    private void Awake()
+    {
+        duracao = GameObject.FindGameObjectWithTag("Player").GetComponent<AtaqueDoJogador>().duracaoDeTiro;
+        dano = GameObject.FindGameObjectWithTag("Player").GetComponent<AtaqueDoJogador>().dano;
     }
     private void Update()
     {
@@ -33,7 +38,7 @@ public class Projetil : MonoBehaviour
         if (collision.gameObject.CompareTag("Inimigo"))
         {
             sfx.Play();
-            collision.gameObject.GetComponent<SistemaVida>().ReceberDano(50);
+            collision.gameObject.GetComponent<SistemaVida>().ReceberDano(dano);
             DestruirProjetil();
         }
         else if (collision.gameObject.CompareTag("Parede"))

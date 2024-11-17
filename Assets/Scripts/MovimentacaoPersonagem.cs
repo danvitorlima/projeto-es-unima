@@ -12,6 +12,11 @@ public class MovimentacaoPersonagem : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
+    public void AumentarVelocidade(float fatorDeCrescimento)
+    {
+        movSpeed = movSpeed * fatorDeCrescimento;
+    }
+
     void FixedUpdate()
     {
         speedX = Input.GetAxisRaw("Horizontal");

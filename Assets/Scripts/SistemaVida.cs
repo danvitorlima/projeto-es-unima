@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class SistemaVida : MonoBehaviour
 {
     [SerializeField]
-    private float vidaMaxima = 100f;
+    private int vidaMaxima = 100;
     [SerializeField]
     private float vidaAtual;
     [SerializeField]
@@ -39,6 +39,12 @@ public class SistemaVida : MonoBehaviour
         GetComponent<SpriteRenderer>().color = UnityEngine.Color.red;
         yield return new WaitForSeconds(0.2f);
         GetComponent<SpriteRenderer>().color = corOriginal;
+    }
+
+    public void AumentarVidaMaxima(float fatorDeCrescimento)
+    {
+        vidaMaxima = Mathf.RoundToInt(vidaMaxima * fatorDeCrescimento);
+        AtualizarBarraDeVida();
     }
 
     public void ReceberDano(float quantidade)
@@ -74,7 +80,7 @@ public class SistemaVida : MonoBehaviour
         if (barraDeVidaUI != null)
         {
             barraDeVidaUI.fillAmount = vidaAtual / vidaMaxima;
-            contadorDeVida.text = vidaAtual.ToString(); 
+            contadorDeVida.text = vidaAtual.ToString()+"/"+vidaMaxima.ToString(); 
         }
     }
     private void Morrer()
