@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -28,9 +29,13 @@ public class AtaqueDoJogador : MonoBehaviour
     [SerializeField]
     private float tempoDeRecarga = 2;
     private AudioSource audioSource;
+    public float duracaoDeTiro;
+    public int dano;
+    [SerializeField] RectTransform qtdRestante, qtdPente, barra;
 
     void Start()
     {
+        dano = 50;
         audioSource = GetComponent<AudioSource>();
         resetarMunicao();
         atualizarUI();
@@ -45,9 +50,36 @@ public class AtaqueDoJogador : MonoBehaviour
         }
         return false;
     }
+
+    public void AumentarDano(float fatorDeCrescimento)
+    {
+        dano = Mathf.RoundToInt(dano * fatorDeCrescimento);
+    }
+
+    public void AumentarMunicaoMaxima(int fatorDeCrescimento = 1, int nivel = 1)
+    {
+        maxBalasTotal = 50 * (nivel - 1) + 100;
+        atualizarUI();
+        barra.offsetMin = new Vector2(2177.1f / (1 + ((float)nivel / 6)), 1318f);
+    }
+
+    public void AumentarVelocidadeDeAtaque(float fatorDeCrescimento)
+    {
+        cooldown /= fatorDeCrescimento;
+    }
+    public void DiminuirTempoDeRecarga(float fatorDeCrescimento)
+    {
+        tempoDeRecarga /= fatorDeCrescimento;
+    }
+
     void atualizarUI(bool mudouBalasRestantes = true)
     {
-        float porcentagemBalasPente = ((float)balasRestantes / maxBalasTotal) + ((float)balasAtuaisNoPente / maxBalasTotal);
+        float porcentagemBalasRestantes = (float)balasRestantes / maxBalasTotal;
+        float porcentagemBalasPente = porcentagemBalasRestantes + ((float)balasAtuaisNoPente / maxBalasTotal);
+        barraDeBalasPente.fillAmount = porcentagemBalasPente;
+        //Debug.Log(porcentagemBalasPente * 100 + "%%");
+        //Debug.Log(porcentagemBalasRestantes * 100 + "%");
+
         if (balasAtuaisNoPente == 0)
         {
             contadorDeBalasPente.text = null;
@@ -56,20 +88,40 @@ public class AtaqueDoJogador : MonoBehaviour
         {
             contadorDeBalasPente.text = balasAtuaisNoPente.ToString();
         }
-        barraDeBalasPente.fillAmount = porcentagemBalasPente;
         if (mudouBalasRestantes)
         {
-            float porcentagemBalasRestantes = (float)balasRestantes / maxBalasTotal;
-            if (porcentagemBalasRestantes == 0)
+            //if (porcentagemBalasRestantes == 0)
+            //{
+            //    contadorDeBalasRestantes.rectTransform.anchoredPosition = new Vector3(-15.05f, contadorDeBalasRestantes.rectTransform.anchoredPosition.y, 0);
+            //}
+            //else
+            //{
+            //    contadorDeBalasRestantes.rectTransform.anchoredPosition = new Vector3(302.625f * porcentagemBalasRestantes - 296.5625f, contadorDeBalasRestantes.transform.localPosition.y, 0);
+            //}
+            //contadorDeBalasPente.rectTransform.anchoredPosition = new Vector3(587.78f * (((float)balasRestantes / maxBalasTotal) + ((float)maxBalasPente / maxBalasTotal)) - 324.98f, contadorDeBalasRestantes.rectTransform.anchoredPosition.y, 0);
+
+            //ajustando texto com barra de munição
+            barraDeBalasRestantes.fillAmount = porcentagemBalasRestantes;
+            barraDeBalasPente.fillAmount = porcentagemBalasPente;
+
+            if (porcentagemBalasRestantes < 0.3)
             {
-                contadorDeBalasRestantes.rectTransform.anchoredPosition = new Vector3(-15.05f, contadorDeBalasRestantes.rectTransform.anchoredPosition.y, 0);
+                qtdRestante.anchorMax = new Vector2(1, 1);
             }
             else
             {
-                contadorDeBalasRestantes.rectTransform.anchoredPosition = new Vector3(302.625f * porcentagemBalasRestantes - 296.5625f, contadorDeBalasRestantes.transform.localPosition.y, 0);
+                qtdRestante.anchorMax = new Vector2(porcentagemBalasRestantes, 1);
             }
-            contadorDeBalasRestantes.text = balasRestantes.ToString();
-            contadorDeBalasPente.rectTransform.anchoredPosition = new Vector3(587.78f * (((float)balasRestantes / maxBalasTotal) + ((float)maxBalasPente / maxBalasTotal)) - 324.98f, contadorDeBalasRestantes.rectTransform.anchoredPosition.y, 0);
+
+
+            qtdPente.anchorMin = new Vector2(porcentagemBalasRestantes, 0);
+            qtdPente.anchorMax = new Vector2(((float)balasRestantes+maxBalasPente) / maxBalasTotal, 1);
+
+
+            qtdPente.anchoredPosition = Vector2.zero;
+            qtdRestante.anchoredPosition = Vector2.zero;
+
+            contadorDeBalasRestantes.text = balasRestantes.ToString() + "/" + maxBalasTotal;
             barraDeBalasRestantes.fillAmount = porcentagemBalasRestantes;
         }
     }
@@ -105,8 +157,17 @@ public class AtaqueDoJogador : MonoBehaviour
         balasRestantes = maxBalasTotal - maxBalasPente;
         atualizarUI();
     }
+
+
+
+
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Keypad0))
+        {
+            //rectTransform.anchorMin = new Vector2(0f, 0.5f); // Âncora esquerda
+            //rectTransform.anchorMax = new Vector2(0f, 0.5f); // Âncora fixa à esquerda
+        }
         if (Input.GetKeyDown(KeyCode.R) && balasRestantes > 0 && !recarregando)
         {
             StartCoroutine(Recarregar());

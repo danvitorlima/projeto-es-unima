@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 7482667652216324306, guid: 32922d05bab9430419f7e4c5f159ffb7, type: 3}
+  m_Sprite: {fileID: -2413806693520163455, guid: ba38c1c08ea87274697b061aef6c6cf2, type: 3}
   m_Color: {r: 1, g: 0.76086956, b: 0.19999999, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -129,7 +129,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.5, y: 0.5}
   m_EdgeRadius: 0
 --- !u!114 &-4670736009475254081
 MonoBehaviour:
@@ -143,5 +143,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 201dacba693a6854a92dfa25bbac22a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dungeonGenerator: {fileID: 0}
-  navMesh: {fileID: 0}

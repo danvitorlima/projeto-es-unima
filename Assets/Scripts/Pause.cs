@@ -16,7 +16,7 @@ public class Pause : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKeyDown(KeyCode.P) && (!GameObject.FindGameObjectWithTag("Tela") || GameObject.FindGameObjectWithTag("Tela") == telaPause))
         {
             if (telaPause.activeSelf)
             {

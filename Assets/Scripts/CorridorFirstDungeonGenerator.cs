@@ -116,8 +116,8 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
             //    escadaPos = position;
             //}
         }
-
-        //definindo pontos
+        roomPosPontosDePatrulhaESpawnDeItens.Item3.Remove(escadaPos);
+        roomPosPontosDePatrulhaESpawnDeItens.Item3.Remove(spawnPos);
 
         //instanciando pontos de patrulha
         foreach (var pp in roomPosPontosDePatrulhaESpawnDeItens.Item2)

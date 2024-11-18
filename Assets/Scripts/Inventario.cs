@@ -132,7 +132,7 @@ public class Inventario : MonoBehaviour
                             slot.GetComponent<Image>().color = new Color32(90, 129, 210, 255);
                             break;
                         case 1:
-                            slot.GetComponent<Image>().color = new Color(0.537f, 0.620f, 1.0f);
+                            slot.GetComponent<Image>().color = new Color(0.275f, 0.375f, 1.0f);
                             break;
                         case 2:
                             slot.GetComponent<Image>().color = new Color(0.765f, 0.325f, 1.0f);
@@ -161,31 +161,34 @@ public class Inventario : MonoBehaviour
     {
         if (telaDeInventario.activeSelf)
         {
+            var objetoNomeDoItem = slotsDoInventario[0].GetComponent<Slot>().campoNomeDoItem;
             foreach (var slot in slotsDoInventario)
             {
                 slot.GetComponent<Slot>().DesativarH();
             }
-            Cursor.SetCursor(texturaCursor, cursorHotspot, CursorMode.Auto);
             telaDeInventario.SetActive(false);
             jogador.GetComponent<AtaqueDoJogador>().enabled = true;
+            jogador.GetComponent<PolygonCollider2D>().enabled = true;
+            objetoNomeDoItem.SetActive(false);
+            objetoNomeDoItem.GetComponent<TextMeshProUGUI>().text = null;
             Time.timeScale = 1;
-
         }
         else
         {
-            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
             telaDeInventario.SetActive(true);
             AtualizarInventario();
-            //pausa o jogo
             jogador.GetComponent<AtaqueDoJogador>().enabled = false;
+            jogador.GetComponent<PolygonCollider2D>().enabled = false;
+            slotsDoInventario[0].GetComponent<Slot>().campoNomeDoItem.SetActive(true);
             Time.timeScale = 0;
         }
     }
 
-    public void AumentarSlots(int quantidade)
+    public void AumentarSlots(int quantidade = 1)
     {
-        if (quantidade + slots < 16)
+        if (quantidade + slots <= 16)
         {
+            Debug.Log("Aumentou o inventario");
             slots += quantidade;
         }
     }
@@ -194,7 +197,7 @@ public class Inventario : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyUp(KeyCode.Tab))
+        if (Input.GetKeyUp(KeyCode.Tab) && (!GameObject.FindGameObjectWithTag("Tela") || GameObject.FindGameObjectWithTag("Tela") == telaDeInventario))
         {
             AbrirInventario();
         }

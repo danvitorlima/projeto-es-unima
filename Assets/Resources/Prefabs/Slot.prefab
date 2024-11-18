@@ -143,26 +143,26 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 4856372753062622600}
-          m_TargetAssemblyTypeName: Slot, Assembly-CSharp
-          m_MethodName: AtivarH
-          m_Mode: 1
+        - m_Target: {fileID: 3901210813628952329}
+          m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_MethodName: SetActive
+          m_Mode: 6
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
             m_StringArgument: 
-            m_BoolArgument: 0
+            m_BoolArgument: 1
           m_CallState: 2
   - eventID: 1
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 4856372753062622600}
-          m_TargetAssemblyTypeName: Slot, Assembly-CSharp
-          m_MethodName: DesativarH
-          m_Mode: 1
+        - m_Target: {fileID: 3901210813628952329}
+          m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_MethodName: SetActive
+          m_Mode: 6
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -200,9 +200,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   highlight: {fileID: 3901210813628952329}
+  campoNomeDoItem: {fileID: 0}
   iconeItem: {fileID: 1837829598862826643}
   quantidade: {fileID: 4075106007357206632}
-  item: {fileID: 0}
 --- !u!1 &1837829598862826643
 GameObject:
   m_ObjectHideFlags: 0

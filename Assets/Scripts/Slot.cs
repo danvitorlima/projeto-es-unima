@@ -10,14 +10,11 @@ using static UnityEditor.Progress;
 public class Slot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private GameObject highlight;
+    public GameObject campoNomeDoItem;
     public GameObject iconeItem;
     public GameObject quantidade;
     public Item item { get; private set; }
     private bool deletavel = false;
-    public void AtivarH()
-    {
-        highlight.SetActive(true);
-    }
     public void DesativarH()
     {
         highlight.SetActive(false);
@@ -61,11 +58,19 @@ public class Slot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     }
     public void OnPointerEnter(PointerEventData eventData)
     {
-        deletavel = true;
+        if (item != null)
+        {
+            campoNomeDoItem.GetComponent<TextMeshProUGUI>().text = item.nome.Substring(0, item.nome.Length - 2).ToLower();
+            deletavel = true;
+        }
     }
     public void OnPointerExit(PointerEventData eventData)
     {
-        deletavel = false;
+        if (item != null)
+        {
+            campoNomeDoItem.GetComponent<TextMeshProUGUI>().text = null;
+            deletavel = false;
+        }
     }
     private void Update()
     {

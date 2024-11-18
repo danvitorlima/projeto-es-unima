@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class PassarDeNivel : MonoBehaviour
+public class Escada : MonoBehaviour
 {
     private GameObject dungeonGenerator;
 
