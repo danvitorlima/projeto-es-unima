@@ -4,8 +4,7 @@ using UnityEngine.AI;
 
 public class PatrulhaInimigo : MonoBehaviour
 {
-    [SerializeField]
-    private bool patrulha;
+    public bool patrulha;
     Rigidbody2D rb;
     Vector3[] pontosDePatrulha;
     Vector3 ppAtual;
