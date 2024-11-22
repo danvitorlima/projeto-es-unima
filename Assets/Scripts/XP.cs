@@ -51,7 +51,7 @@ public class XP : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("XP"))
         {
-            ganharXP(1000);
+            ganharXP(50);
             GetComponent<AudioSource>().PlayOneShot(sfx);
             Destroy(collision.gameObject);
         }
@@ -77,7 +77,7 @@ public class XP : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.X) && (!GameObject.FindGameObjectWithTag("Tela") || GameObject.FindGameObjectWithTag("Tela") == telaDeProgressaoDeAtributos))
+        if (Input.GetKeyDown(KeyCode.Q) && (!GameObject.FindGameObjectWithTag("Tela") || GameObject.FindGameObjectWithTag("Tela") == telaDeProgressaoDeAtributos))
         {
             AbrirProgressaoDeAtributos();
         }

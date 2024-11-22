@@ -4,9 +4,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.WebSockets;
+using TMPro;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
 {
@@ -22,28 +26,139 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
     [SerializeField]
     private GameObject estrelas;
     private List<List<GameObject>> itens;
-    [SerializeField]
-    private int maxItensPorSala;
-    [SerializeField]
-    private int minItensPorSala;
-    [SerializeField]
-    private int maxInimigosPorSala;
-    [SerializeField]
-    private int minInimigosPorSala;
+    private GameObject[] inimigos;
+    public int minItensPorSala, maxItensPorSala;
+    public int minInimigosPorSala, maxInimigosPorSala;
     [SerializeField]
     private NavMeshSurface navMesh;
+    public int proporcaoDeInimigosRanged = 1;
+    public int nivel;
+    private AudioSource[] audioSources;
+    [SerializeField]
+    private Image fadeImage;
+    private float[] volumes;
+    [SerializeField] private TextMeshProUGUI countdownText;
+    [SerializeField] private AudioClip sfxContagem;
+    [SerializeField] private AudioSource sfxContagemSource;
 
     protected override void RunProceduralGeneration()
     {
+        countdownText.gameObject.SetActive(true);
         CorridorFirstGeneration();
-
         StartCoroutine(MontarNavMesh());
+        Debug.Log("Nivel: " + PlayerPrefs.GetInt("Nivel"));
+        nivel = PlayerPrefs.GetInt("Nivel");
+        FadeIn(5f);
+        StartCoroutine(ContagemRegressiva());
     }
+
+    private IEnumerator ContagemRegressiva()
+    {
+        float remainingTime = 3;
+
+        foreach (var inimigo in GameObject.FindGameObjectsWithTag("Inimigo"))
+        {
+            inimigo.GetComponent<PatrulhaInimigo>().enabled = false;
+        }
+
+        while (remainingTime > 0)
+        {
+            Time.timeScale = 0;
+            // Atualiza a UI (se estiver usando)
+            if (countdownText != null)
+            {
+                countdownText.text = Mathf.Ceil(remainingTime).ToString();
+            }
+
+            // Espera um frame e diminui o tempo
+            yield return null;
+            remainingTime -= Time.unscaledDeltaTime;
+        }
+        sfxContagemSource.PlayOneShot(sfxContagem);
+        if (countdownText != null)
+        {
+            countdownText.gameObject.SetActive(false);
+        }
+
+        foreach (var inimigo in GameObject.FindGameObjectsWithTag("Inimigo"))
+        {
+            inimigo.GetComponent<PatrulhaInimigo>().enabled = true;
+        }
+        Time.timeScale = 1;
+    }
+
     private void Start()
     {
+        volumes = null;
+        audioSources = GameObject.FindObjectsOfType<AudioSource>();
+        GameObject.FindAnyObjectByType<PostProcessVolume>().enabled = PlayerPrefs.GetInt("Graficos", 0) == 1;
         GenerateDungeon();
     }
 
+    private void FadeIn(float duracao)
+    {
+        StartCoroutine(FadeInVideo(duracao));
+        StartCoroutine(FadeInAudio(duracao));
+    }
+    private IEnumerator FadeInVideo(float fadeDuration)
+    {
+        float timer = fadeDuration;
+        while (timer > 0)
+        {
+            timer -= Time.unscaledDeltaTime;
+            fadeImage.color = new Color(0, 0, 0, timer / fadeDuration);
+            yield return null;
+        }
+        fadeImage.color = new Color(0, 0, 0, 0);
+    }
+    private IEnumerator FadeInAudio(float fadeDuration)
+    {
+        float timer = 0;
+        var _volumes = volumes == null ? audioSources.Select(x => x.volume).ToArray() : volumes;
+        int i = 0;
+
+        while (timer < fadeDuration)
+        {
+            i = 0;
+            timer += Time.unscaledDeltaTime;
+            foreach (var audioSource in audioSources)
+            {
+                audioSource.volume = Mathf.Lerp(0, volumes == null ? (PlayerPrefs.GetFloat(audioSource.CompareTag("Musica") ? "Musica" : "Volume") * _volumes[i]) : _volumes[i], timer / fadeDuration);
+                i++;
+            }
+            yield return null;
+        }
+
+        i = 0;
+        foreach (var audioSource in audioSources)
+        {
+            audioSource.volume = volumes == null ? (PlayerPrefs.GetFloat(audioSource.CompareTag("Musica") ? "Musica" : "Volume") * _volumes[i]) : _volumes[i];
+            i++;
+        }
+
+        if (volumes == null)
+        {
+            volumes = audioSources.Select(x => x.volume).ToArray();
+        }
+    }
+
+
+    private GameObject GerarInimigo()
+    {
+        var prob = UnityEngine.Random.value;
+
+
+        if (prob < (float)(1 - nivel) / (nivel + 1))
+        {
+            //inimigo melee
+            return inimigos[0];
+        }
+        else
+        {
+            //inimigo ranged
+            return inimigos[1];
+        }
+    }
     private GameObject GerarItem()
     {
         var prob = UnityEngine.Random.value;
@@ -59,15 +174,17 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
         else if (prob < 0.99f) { i = 2; }
 
         // item lendario 1%
-        else{ i = 3; }
+        else { i = 3; }
 
         return itens[i][UnityEngine.Random.Range(0, itens[i].Count)];
     }
 
     private void CorridorFirstGeneration()
     {
+
         //separando itens por tier
         itens = Resources.LoadAll<GameObject>("Prefabs/Itens").GroupBy(x => x.GetComponent<Item>().tier).Select(tier => tier.ToList()).ToList();
+        inimigos = Resources.LoadAll<GameObject>("Prefabs/Inimigos");
         HashSet<Vector2Int> floorPositions = new HashSet<Vector2Int>();
         HashSet<Vector2Int> potentialRoomPositions = new HashSet<Vector2Int>();
         Vector2Int escadaPos = new Vector2Int();
@@ -122,7 +239,7 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
         //instanciando pontos de patrulha
         foreach (var pp in roomPosPontosDePatrulhaESpawnDeItens.Item2)
         {
-            Instantiate(inimigo, (Vector2)pp + Vector2.one / 2, Quaternion.identity);
+            Instantiate(GerarInimigo(), (Vector2)pp + Vector2.one / 2, Quaternion.identity);
             tilemapVisualizer.ColocarPP(pp);
         }
         //instanciando itens

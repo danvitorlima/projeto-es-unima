@@ -1,6 +1,7 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class PatrulhaInimigo : MonoBehaviour
 {
@@ -11,9 +12,12 @@ public class PatrulhaInimigo : MonoBehaviour
     int index;
     private double lastAttackTime;
     private NavMeshAgent agent;
+    private bool fugindo;
+    private bool ranged;
 
     void Start()
     {
+        ranged = GetComponent<AtaqueDoInimigo>() != null;
         agent = GetComponent<NavMeshAgent>();
         agent.updateUpAxis = false;
         agent.updateRotation = false;
@@ -58,6 +62,10 @@ public class PatrulhaInimigo : MonoBehaviour
             patrulha = false;
             index = 0;
             agent.ResetPath();
+            if (ranged)
+            {
+                agent.stoppingDistance = 2f;
+            }
         }
     }
 
@@ -65,6 +73,7 @@ public class PatrulhaInimigo : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+            fugindo = false;
             patrulha = true;
             pontosDePatrulha = EncontrarProximosPPs();
             ppAtual = pontosDePatrulha[index];
@@ -72,15 +81,49 @@ public class PatrulhaInimigo : MonoBehaviour
             {
                 agent.SetDestination(ppAtual);
             }
+            if (ranged)
+            {
+                agent.stoppingDistance = 0;
+            }
         }
 
     }
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Player") && agent.isActiveAndEnabled)
         {
-            if (agent.isActiveAndEnabled)
+            if (ranged)
+            {
+                if (Vector2.Distance(transform.position, collision.transform.position) > 1.5f)
+                {
+                    if (agent.velocity.Equals(Vector3.zero))
+                    {
+                        var direcao = collision.transform.position - transform.position;
+                        Quaternion targetRotation = Quaternion.LookRotation(Vector3.forward, direcao.normalized);
+                        agent.transform.rotation = Quaternion.Lerp(agent.transform.rotation, targetRotation, Time.deltaTime * 15f);
+                        fugindo = false;
+                    }
+                    agent.SetDestination(collision.transform.position);
+                    if (agent.stoppingDistance == 0)
+                    {
+                        agent.stoppingDistance = 2f;
+                    }
+                }
+                else
+                {
+                    fugindo = true;
+                    var direcao = collision.transform.position - transform.position;
+                    Quaternion targetRotation = Quaternion.LookRotation(Vector3.forward, direcao.normalized);
+                    agent.transform.rotation = Quaternion.Lerp(agent.transform.rotation, targetRotation, Time.deltaTime * 15f);
+                    agent.SetDestination(2 * transform.position - collision.transform.position);
+                    if (agent.stoppingDistance == 2)
+                    {
+                        agent.stoppingDistance = 0;
+                    }
+                }
+            }
+            else
             {
                 agent.SetDestination(collision.transform.position);
             }
@@ -119,7 +162,7 @@ public class PatrulhaInimigo : MonoBehaviour
     private void Update()
     {
         Vector3 direction = agent.velocity.normalized;
-        if (direction.magnitude > 0.1f)
+        if (direction.magnitude > 0.1f && !fugindo)
         {
             Quaternion targetRotation = Quaternion.LookRotation(Vector3.forward, direction);
             //suavizando rotação do inimigo

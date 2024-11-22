@@ -24,6 +24,8 @@ public class SistemaVida : MonoBehaviour
     [SerializeField]
     private GameObject xp;
     private TextMeshProUGUI contadorDeVida;
+    [SerializeField] private AudioClip sfxDano;
+    [SerializeField] private AudioSource sfxDanoSource;
 
     void Start()
     {
@@ -49,9 +51,18 @@ public class SistemaVida : MonoBehaviour
 
     public void ReceberDano(float quantidade)
     {
-        vidaAtual -= quantidade;
-        vidaAtual = Mathf.Clamp(vidaAtual, 0, vidaMaxima);
-        AtualizarBarraDeVida();
+        if (!CompareTag("Player") || PlayerPrefs.GetInt("VidaInfinita", 0) != 1)
+        {
+            vidaAtual -= quantidade;
+            vidaAtual = Mathf.Clamp(vidaAtual, 0, vidaMaxima);
+            AtualizarBarraDeVida();
+        }
+
+        if (CompareTag("Player"))
+        {
+            sfxDanoSource.PlayOneShot(sfxDano);
+        }
+
         if (vidaAtual <= 0)
         {
             Morrer();
@@ -60,7 +71,7 @@ public class SistemaVida : MonoBehaviour
         {
             StartCoroutine(mudarCorTemporariamenteCorrotina());
         }
-        
+
     }
 
     public bool Curar(int quantidade)
@@ -80,7 +91,7 @@ public class SistemaVida : MonoBehaviour
         if (barraDeVidaUI != null)
         {
             barraDeVidaUI.fillAmount = vidaAtual / vidaMaxima;
-            contadorDeVida.text = vidaAtual.ToString()+"/"+vidaMaxima.ToString(); 
+            contadorDeVida.text = vidaAtual.ToString() + "/" + vidaMaxima.ToString();
         }
     }
     private void Morrer()
@@ -88,7 +99,7 @@ public class SistemaVida : MonoBehaviour
         if (gameObject.CompareTag("Inimigo"))
         {
             GetComponent<NavMeshAgent>().enabled = false;
-            Instantiate(xp, gameObject.transform.position,Quaternion.identity).transform.parent = null;
+            Instantiate(xp, gameObject.transform.position, Quaternion.identity).transform.parent = null;
         }
         gameObject.GetComponent<Rigidbody2D>().simulated = false;
         if (gameObject.CompareTag("Player"))
@@ -98,7 +109,7 @@ public class SistemaVida : MonoBehaviour
         }
         animator.Play("morte");
         Destroy(gameObject, animator.GetCurrentAnimatorStateInfo(0).length);
-        if(telaGameOver != null)
+        if (telaGameOver != null)
         {
             cursorHotspot = new Vector2(texturaCursor.width / 2, texturaCursor.height / 2);
             Cursor.SetCursor(texturaCursor, cursorHotspot, CursorMode.Auto);

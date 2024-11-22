@@ -16,6 +16,12 @@ public class CursorManager : MonoBehaviour
         Cursor.SetCursor(texturaCursor, cursorHotspot, CursorMode.Auto);
     }
 
+    public void FecharTela()
+    {
+        tecla = KeyCode.None;
+        Cursor.SetCursor(texturaCursor, cursorHotspot, CursorMode.Auto);
+    }
+
     void DetectarTecla(KeyCode _tecla)
     {
         if (Input.GetKeyDown(_tecla))
@@ -37,8 +43,11 @@ public class CursorManager : MonoBehaviour
 
     private void Update()
     {
-        DetectarTecla(KeyCode.X);
-        DetectarTecla(KeyCode.P);
+        DetectarTecla(KeyCode.Q);
+        if (!GameObject.FindGameObjectWithTag("Configuracoes"))
+        {
+            DetectarTecla(KeyCode.P);
+        }
         DetectarTecla(KeyCode.Tab);
     }
 

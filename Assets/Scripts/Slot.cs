@@ -22,7 +22,7 @@ public class Slot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public void AtualizarSlot(Item _item, int _quantidade)
     {
         item = _item;
-        Debug.Log("??" + item.nome);
+        Debug.Log(item.nome);
         quantidade.GetComponent<TextMeshProUGUI>().text = _quantidade.ToString();
         iconeItem.GetComponent<Image>().sprite = item.icone;
     }
