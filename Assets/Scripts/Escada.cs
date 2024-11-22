@@ -27,6 +27,7 @@ public class Escada : MonoBehaviour
         dungeonGenerator.minItensPorSala *= 2;
         dungeonGenerator.maxItensPorSala *= 2;
         dungeonGenerator.GenerateDungeon();
+        Time.timeScale = 1;
         GameObject.FindGameObjectWithTag("Player").GetComponent<AtaqueDoJogador>().resetarMunicao();
         foreach (var inimigo in GameObject.FindGameObjectsWithTag("Inimigo"))
         {
@@ -110,6 +111,7 @@ public class Escada : MonoBehaviour
             }
             else
             {
+                Time.timeScale = 0;
                 PassarDeNivel();
             }
         }

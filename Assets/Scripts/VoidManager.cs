@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using Unity.VisualScripting;
@@ -7,6 +8,7 @@ using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
 public class VoidManager : MonoBehaviour
 {
@@ -23,15 +25,17 @@ public class VoidManager : MonoBehaviour
     int i = 0;
     int x;
     [SerializeField] AudioClip sfxCheat;
+    [SerializeField] private VideoPlayer videoPlayer;
 
     void Start()
     {
+        videoPlayer.url = Path.Combine(Application.streamingAssetsPath, "void.webm");
         teste = null;
         cheats.Add(boss);
         cheats.Add(menu);
         cheats.Add(vidaInfinita);
         cheats.Add(spoiler);
-        ppv.enabled = PlayerPrefs.GetInt("Graficos", 0) == 1;
+        ppv.enabled = PlayerPrefs.GetInt("Graficos") == 1;
         Cursor.visible = false;
         StartCoroutine(FadeInAudio(5f));
         StartCoroutine(FadeIn(4f));
@@ -53,7 +57,7 @@ public class VoidManager : MonoBehaviour
         while (timer < fadeDuration)
         {
             timer += Time.deltaTime;
-            audioSource.volume = Mathf.Lerp(0, PlayerPrefs.GetFloat("Musica"), timer / fadeDuration);
+            audioSource.volume = Mathf.Lerp(0,  PlayerPrefs.GetFloat("Musica"), timer / fadeDuration);
             yield return null;
         }
         audioSource.volume = PlayerPrefs.GetFloat("Musica");

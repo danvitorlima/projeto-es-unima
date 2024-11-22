@@ -11,4 +11,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Jogo.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/void.unity
+    guid: 6f0089a63ae3b2944ba116bfd4e1076a
+  - enabled: 1
+    path: Assets/Scenes/FimDeJogo.unity
+    guid: 29bc2f8d5f77610408a3cc78812b9c0a
   m_configObjects: {}

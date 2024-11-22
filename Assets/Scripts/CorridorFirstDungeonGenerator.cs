@@ -55,9 +55,11 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
     private IEnumerator ContagemRegressiva()
     {
         float remainingTime = 3;
+        jogador.GetComponent<AtaqueDoJogador>().enabled = false;
 
         foreach (var inimigo in GameObject.FindGameObjectsWithTag("Inimigo"))
         {
+            inimigo.GetComponent<PolygonCollider2D>().enabled = false;
             inimigo.GetComponent<PatrulhaInimigo>().enabled = false;
         }
 
@@ -82,8 +84,10 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
 
         foreach (var inimigo in GameObject.FindGameObjectsWithTag("Inimigo"))
         {
+            inimigo.GetComponent<PolygonCollider2D>().enabled = true;
             inimigo.GetComponent<PatrulhaInimigo>().enabled = true;
         }
+        jogador.GetComponent<AtaqueDoJogador>().enabled = true;
         Time.timeScale = 1;
     }
 
@@ -91,7 +95,7 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
     {
         volumes = null;
         audioSources = GameObject.FindObjectsOfType<AudioSource>();
-        GameObject.FindAnyObjectByType<PostProcessVolume>().enabled = PlayerPrefs.GetInt("Graficos", 0) == 1;
+        GameObject.FindAnyObjectByType<PostProcessVolume>().enabled = PlayerPrefs.GetInt("Graficos", 1) == 1;
         GenerateDungeon();
     }
 

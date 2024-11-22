@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
 public class MainMenu : MonoBehaviour
 {
@@ -17,22 +19,29 @@ public class MainMenu : MonoBehaviour
     public Image fadeImage;
     private bool emConfiguracoes;
     [SerializeField] private AudioClip sfxSair;
+    [SerializeField] private VideoPlayer videoPlayer;
 
     private void Start()
     {
+        videoPlayer.url = Path.Combine(Application.streamingAssetsPath, "menuVoid.webm");
         Cursor.visible = true;
-        ppv.enabled = PlayerPrefs.GetInt("Graficos", 0) == 1;
+        ppv.enabled = PlayerPrefs.GetInt("Graficos", 1) == 1;
+        if (!PlayerPrefs.HasKey("Graficos"))
+        {
+            PlayerPrefs.SetInt("Graficos", 1);
+            PlayerPrefs.Save();
+        }
         Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
-        sfx.value = PlayerPrefs.GetFloat("Volume", sfx.value);
-        musica.value = PlayerPrefs.GetFloat("Musica", musica.value);
+        sfx.value = PlayerPrefs.GetFloat("Volume", 0.5f);
+        musica.value = PlayerPrefs.GetFloat("Musica", 1f);
         audioSource.volume = musica.value;
         sfxAudioSource.volume = sfx.value;
+        SalvarConfiguracoes();
     }
 
 
     public void SalvarConfiguracoes()
     {
-        sfxAudioSource.Play();
         PlayerPrefs.SetFloat("Volume", sfx.value);
         PlayerPrefs.Save();
         PlayerPrefs.SetFloat("Musica", musica.value);
