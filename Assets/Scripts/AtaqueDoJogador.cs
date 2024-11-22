@@ -6,13 +6,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
-public class AtaqueDoJogador : MonoBehaviour
+public class AtaqueDoJogador : AtaqueRanged
 {
-    [SerializeField]
-    private GameObject projetil;
-    [SerializeField]
-    private float cooldown; // cooldown de ataque
-    private float lastAttackTime;
     [SerializeField]
     private int maxBalasPente = 10; // máximo de balas no pente
     [SerializeField]
@@ -24,22 +19,22 @@ public class AtaqueDoJogador : MonoBehaviour
     [SerializeField]
     private UnityEngine.UI.Image barraDeBalasPente, barraDeBalasRestantes;
     [SerializeField]
-    private AudioClip tiroSFX, semRecargaSFX, recargaSFX;
+    private AudioClip semRecargaSFX, recargaSFX;
     private bool recarregando = false;
     [SerializeField]
     private float tempoDeRecarga = 2;
     private AudioSource audioSource;
-    public float duracaoDeTiro;
-    public int dano;
     [SerializeField] RectTransform qtdRestante, qtdPente, barra;
 
-    void Start()
+    protected override void Start()
     {
+        base.Start();
         dano = 50;
         audioSource = GetComponent<AudioSource>();
         resetarMunicao();
         atualizarUI();
     }
+    
     public bool AdicionarMunicao(int quantidade)
     {
         if (quantidade + balasAtuaisNoPente + balasRestantes <= maxBalasTotal)
@@ -51,22 +46,13 @@ public class AtaqueDoJogador : MonoBehaviour
         return false;
     }
 
-    public void AumentarDano(float fatorDeCrescimento)
-    {
-        dano = Mathf.RoundToInt(dano * fatorDeCrescimento);
-    }
-
     public void AumentarMunicaoMaxima(int fatorDeCrescimento = 1, int nivel = 1)
     {
         maxBalasTotal = 50 * (nivel - 1) + 100;
         atualizarUI();
-        barra.offsetMin = new Vector2(2177.1f / (1 + ((float)nivel / 6)), 1318f);
+        barra.offsetMin -= new Vector2(145, 0);
     }
 
-    public void AumentarVelocidadeDeAtaque(float fatorDeCrescimento)
-    {
-        cooldown /= fatorDeCrescimento;
-    }
     public void DiminuirTempoDeRecarga(float fatorDeCrescimento)
     {
         tempoDeRecarga /= fatorDeCrescimento;
@@ -163,24 +149,20 @@ public class AtaqueDoJogador : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Keypad0))
-        {
-            //rectTransform.anchorMin = new Vector2(0f, 0.5f); // Âncora esquerda
-            //rectTransform.anchorMax = new Vector2(0f, 0.5f); // Âncora fixa à esquerda
-        }
+        //recarregar
         if (Input.GetKeyDown(KeyCode.R) && balasRestantes > 0 && !recarregando)
         {
             StartCoroutine(Recarregar());
         }
+        //atirar
         if (Input.GetMouseButtonDown(0) && Time.time - lastAttackTime >= cooldown && !recarregando)
         {
             lastAttackTime = Time.time;
             if (balasAtuaisNoPente > 0)
             {
-                var bala = Instantiate(projetil, transform.position + transform.up / 1.6f, Quaternion.Euler(0, 0, transform.localEulerAngles.z + 90));
+                Atirar();
                 balasAtuaisNoPente--;
                 atualizarUI(false);
-                bala.GetComponent<Rigidbody2D>().AddForce(transform.up * 400f);
             }
             else if (balasRestantes > 0)
             {

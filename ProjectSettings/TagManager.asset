@@ -23,6 +23,9 @@ TagManager:
   - Atributo
   - TelaDeProgressao
   - Tela
+  - Fade
+  - Musica
+  - Configuracoes
   layers:
   - Default
   - TransparentFX

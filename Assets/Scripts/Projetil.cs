@@ -5,20 +5,30 @@ using UnityEngine;
 public class Projetil : MonoBehaviour
 {
     private Animator animator;
-    private double duracao;
-    private int dano;
+    public double duracao;
+    public int dano;
     private double momentoDoDisparo;
     private AudioSource sfx;
+    private string adversario;
     private void Start()
     {
         sfx = GameObject.FindGameObjectWithTag("SFX").GetComponent<AudioSource>();
         momentoDoDisparo = Time.time;
         animator = GetComponent<Animator>();
     }
-    private void Awake()
+
+    public void determinarFonte(string fonte)
     {
-        duracao = GameObject.FindGameObjectWithTag("Player").GetComponent<AtaqueDoJogador>().duracaoDeTiro;
-        dano = GameObject.FindGameObjectWithTag("Player").GetComponent<AtaqueDoJogador>().dano;
+        duracao = GameObject.FindGameObjectWithTag(fonte).GetComponent<AtaqueRanged>().duracaoDeTiro;
+        dano = GameObject.FindGameObjectWithTag(fonte).GetComponent<AtaqueRanged>().dano;
+        if (fonte == "Player")
+        {
+            adversario = "Inimigo";
+        }
+        else
+        {
+            adversario = "Player";
+        }
     }
     private void Update()
     {
@@ -35,14 +45,14 @@ public class Projetil : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Inimigo"))
+        if (collision.gameObject.CompareTag("Parede"))
+        {
+            DestruirProjetil();
+        }
+        if (collision.gameObject.CompareTag(adversario))
         {
             sfx.Play();
             collision.gameObject.GetComponent<SistemaVida>().ReceberDano(dano);
-            DestruirProjetil();
-        }
-        else if (collision.gameObject.CompareTag("Parede"))
-        {
             DestruirProjetil();
         }
     }

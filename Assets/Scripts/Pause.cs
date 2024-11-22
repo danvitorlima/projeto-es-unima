@@ -8,10 +8,21 @@ public class Pause : MonoBehaviour
     [SerializeField]
     private GameObject telaPause;
     private GameObject jogador;
+    [SerializeField] private CursorManager cursorManager;
+
     void Start()
     {
         jogador = GameObject.FindGameObjectWithTag("Player");
     }
+
+    public void Pausar(bool pausando)
+    {
+        telaPause.SetActive(pausando);
+        jogador.GetComponent<AtaqueDoJogador>().enabled = !pausando;
+        Time.timeScale = pausando ? 0 : 1;
+        cursorManager.FecharTela();
+    }
+
 
     // Update is called once per frame
     void Update()
